@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Administración - Sistema NUAM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(120deg, #FFF3E0 60%, #FFB74D 100%);
+      min-height: 100vh;
+    }
+
+    .admin-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(255,152,0,0.14);
+      border-top: 8px solid #FF9800;
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 34px 34px 24px 34px;
+    }
+
+    .admin-title {
+      color: #FF9800;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: #FF9800 !important;
+      color: #fff !important;
+      font-weight: bold;
+      border: none;
+    }
+
+    .nav-tabs .nav-link {
+      color: #FF9800;
+      font-weight: 500;
+      border: none;
+      background: #FFE0B2;
+      margin-right: 4px;
+    }
+
+    .btn-orange {
+      background-color: #FF9800;
+      color: #fff;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-orange:hover {
+      background-color: #F57C00;
+    }
+
+    .btn-outline-orange {
+      border: 1px solid #FF9800;
+      color: #FF9800;
+      background: #fff;
+      font-weight: 500;
+    }
+
+    .btn-outline-orange:hover {
+      background-color: #FF9800;
+      color: #fff;
+    }
+
+    .table-orange thead {
+      background-color: #FFB74D;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+
+<div class="admin-card">
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'logout' %}" class="btn btn-outline-orange">Cerrar Sesión</a>
+</div>
+  <div class="admin-title">Panel de Administración</div>
+
+  <!-- Pestañas -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a class="nav-link active" data-bs-toggle="tab" href="#usuarios">Gestión de Usuarios</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#permisos">Permisos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#auditoria">Auditoría</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- 🔸 GESTIÓN DE USUARIOS -->
+    <div class="tab-pane show active" id="usuarios">
+      <b>Usuarios Registrados</b>
+
+      <table class="table table-bordered table-orange table-sm mt-3">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.rol }}</td>
+            <td>{{ u.correo }}</td>
+
+            <td>
+              {% if u.estado == "activo" %}
+                <span class="text-success">Activo</span>
+              {% elif u.estado == "pendiente" %}
+                <span class="text-warning">Pendiente</span>
+              {% else %}
+                <span class="text-danger">Inactivo</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if u.estado == "pendiente" %}
+                <a href="{% url 'aprobar_usuario' u.id_usuario %}" class="btn btn-orange btn-sm me-1">Aprobar</a>
+              {% endif %}
+
+              <a href="{% url 'editar_usuario' u.id_usuario %}" class="btn btn-outline-orange btn-sm me-1">Editar</a>
+              <a href="{% url 'eliminar_usuario' u.id_usuario %}" class="btn btn-outline-orange btn-sm">Eliminar</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">No hay usuarios registrados.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 🔸 PERMISOS -->
+    <div class="tab-pane" id="permisos">
+      <b>Permisos y Roles</b>
+      <p class="mt-2">Aquí podrás gestionar los permisos del sistema.</p>
+      <button class="btn btn-orange">Configurar Permisos</button>
+    </div>
+
+    <!-- 🔸 AUDITORÍA -->
+    <div class="tab-pane" id="auditoria">
+      <b>Registro de Auditoría</b>
+
+      <table class="table table-bordered table-sm mt-3">
+        <thead>
+          <tr>
+            <th>Acción</th>
+            <th>Resultado</th>
+            <th>Usuario Admin</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for log in auditorias %}
+          <tr>
+            <td>{{ log.accion }}</td>
+            <td>{{ log.resultado }}</td>
+            <td>{{ log.fk_usuario.nombre }}</td>
+            <td>{{ log.fecha_hora }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">Aún no hay registros de auditoría.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

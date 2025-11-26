@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Calificación</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body { background-color: #FFF3E0; }
+
+    .orange-bar {
+      background: #FF9800;
+      height: 8px;
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      color: #FF9800;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-weight: 500;
+      color: #F57C00;
+    }
+
+    .form-control.bg-orange {
+      background-color: #FFF8E1;
+      border: 1px solid #FF9800;
+    }
+
+    .btn-orange {
+      background-color: #FF9800;
+      color: #fff;
+      border: none;
+      font-weight: 500;
+    }
+    .btn-orange:hover {
+      background-color: #F57C00;
+    }
+
+    .btn-outline-orange {
+      border: 1px solid #FF9800;
+      color: #FF9800;
+    }
+    .btn-outline-orange:hover {
+      background-color: #FF9800;
+      color: #fff;
+    }
+
+    .card { border-top: 8px solid #FF9800; border-radius: 8px; }
+  </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+  
+  <div class="card p-4 shadow">
+    <div class="orange-bar"></div>
+    <h4>Editar Calificación</h4>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Mercado</label>
+          <input name="mercado" type="text" class="form-control bg-orange" value="{{ c.mercado }}" disabled>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Instrumento</label>
+          <input name="instrumento" type="text" class="form-control bg-orange" placeholder="(no implementado)" disabled>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Factor Actualizado</label>
+          <input name="factor_actualizado" type="number" step="0.0001" class="form-control bg-orange" value="{{ c.factor_actualizado }}">
+        </div>
+      </div>
+
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Descripción</label>
+          <input name="descripcion" type="text" class="form-control bg-orange" value="{{ c.descripcion }}">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Fecha</label>
+          <input name="fecha" type="date" class="form-control bg-orange" value="{{ c.fecha }}">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Año</label>
+          <input name="ano" type="number" class="form-control bg-orange" value="{{ c.ano }}">
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <a href="{% url 'perfil_usuario' %}" class="btn btn-outline-orange me-3">Cancelar</a>
+        <button type="submit" class="btn btn-orange">Guardar Cambios</button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>

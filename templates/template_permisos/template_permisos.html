@@ -1,0 +1,68 @@
+{% extends "template_dashboard_admin.html" %}
+{% block contenido_admin %}
+
+<h4 class="mb-4">Gestión de Permisos</h4>
+
+<p class="text-muted">Aquí puedes ver y administrar los permisos asignados a cada rol dentro del sistema.</p>
+
+<!-- Tabla de permisos -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-warning">
+            <tr>
+                <th>Rol</th>
+                <th>Puede Ver</th>
+                <th>Puede Editar</th>
+                <th>Puede Eliminar</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in permisos %}
+            <tr>
+                <td>{{ p.rol }}</td>
+                <td>
+                    {% if p.permiso_ver %}
+                        ✔ Sí
+                    {% else %}
+                        ✖ No
+                    {% endif %}
+                </td>
+                <td>
+                    {% if p.permiso_editar %}
+                        ✔ Sí
+                    {% else %}
+                        ✖ No
+                    {% endif %}
+                </td>
+                <td>
+                    {% if p.permiso_eliminar %}
+                        ✔ Sí
+                    {% else %}
+                        ✖ No
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{% url 'editar_permiso' p.id %}" class="btn btn-sm btn-primary">
+                        Modificar
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No hay permisos configurados.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{% url 'perfil_administrador' %}" class="btn btn-secondary mt-3">
+    Volver al Dashboard
+</a>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calificaciones Tributarias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Calificaciones Tributarias</h2>
+
+    <!-- BUSCADOR + BOTÓN -->
+    <div class="d-flex justify-content-between mb-3">
+        <form class="d-flex" method="get" action="">
+            <input type="text" name="buscar" class="form-control me-2"
+                   placeholder="Buscar por descripción o año..." value="{{ request.GET.buscar }}">
+            <button class="btn btn-primary">Buscar</button>
+        </form>
+
+        <a href="{% url 'agregar_calificacion' %}" class="btn btn-success">
+            + Agregar Calificación
+        </a>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Mercado</th>
+                        <th>Año</th>
+                        <th>Descripción</th>
+                        <th>Factor</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for c in calificaciones %}
+                    <tr>
+                        <td>{{ c.id_calificacion }}</td>
+                        <td>{{ c.fecha }}</td>
+                        <td>{{ c.mercado }}</td>
+                        <td>{{ c.ano }}</td>
+                        <td>{{ c.descripcion }}</td>
+                        <td>{{ c.factor_actualizado }}</td>
+
+                        <td class="text-center">
+                            <a href="{% url 'editar_calificacion' c.id_calificacion %}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{% url 'eliminar_calificacion' c.id_calificacion %}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('¿Seguro que deseas eliminar esta calificación?');">
+                                Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">No hay calificaciones registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "template_dashboard_admin.html" %}
+{% block contenido_admin %}
+
+<h4 class="mb-3">Editar Permisos del Rol: {{ permiso.rol }}</h4>
+
+<form method="POST" class="p-3 border rounded bg-light">
+    {% csrf_token %}
+
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="ver" id="ver" {% if permiso.permiso_ver %}checked{% endif %}>
+        <label class="form-check-label" for="ver">Puede ver calificaciones</label>
+    </div>
+
+    <div class="form-check mt-2">
+        <input type="checkbox" class="form-check-input" name="editar" id="editar" {% if permiso.permiso_editar %}checked{% endif %}>
+        <label class="form-check-label" for="editar">Puede editar calificaciones</label>
+    </div>
+
+    <div class="form-check mt-2">
+        <input type="checkbox" class="form-check-input" name="eliminar" id="eliminar" {% if permiso.permiso_eliminar %}checked{% endif %}>
+        <label class="form-check-label" for="eliminar">Puede eliminar calificaciones</label>
+    </div>
+
+    <button class="btn btn-success mt-3">Guardar cambios</button>
+    <a href="{% url 'permisos' %}" class="btn btn-secondary mt-3">Cancelar</a>
+</form>
+
+{% endblock %}

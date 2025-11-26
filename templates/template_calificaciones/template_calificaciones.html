@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Calificaciones Tributarias</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body { 
+      background-color: #FFF8F2; 
+    }
+
+    /* Botones */
+    .btn-orange { 
+      background-color: #FF9800; 
+      border: none; 
+      color: white; 
+      font-weight: 500;
+    }
+
+    .btn-orange:hover { 
+      background-color: #FB8C00; 
+    }
+
+    .btn-outline-orange { 
+      border: 1px solid #FF9800; 
+      color: #FF9800; 
+      font-weight: 500;
+    }
+
+    .btn-outline-orange:hover { 
+      background-color: #FF9800; 
+      color: white; 
+    }
+
+    /* Tabla */
+    .table-orange thead { 
+      background-color: #FFB74D; 
+      color: white; 
+    }
+
+    h5 {
+      color:#FF9800; 
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+  <!-- Usuario logueado -->
+  <div class="d-flex justify-content-end align-items-center mb-3" style="gap: 12px;">
+      <strong class="text-end">Bienvenido, {{ nombre_usuario }}</strong>
+
+      <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Cerrar sesión</a>
+  </div>
+
+  <h5>Mis Calificaciones Tributarias</h5>
+
+  <form method="GET" class="row g-2 mb-3">
+
+    <div class="col-md-3">
+      <label class="form-label">Mercado</label>
+      <select class="form-select" name="mercado">
+        <option value="">Todos</option>
+        <option value="ACCIONES">ACCIONES</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Año Comercial</label>
+      <input type="number" class="form-control" name="ano" placeholder="Ej: 2025">
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+      <button type="submit" class="btn btn-orange me-2">Buscar</button>
+      <a href="{% url 'perfil_usuario' %}" class="btn btn-outline-orange">Limpiar</a>
+    </div>
+
+  </form>
+
+  <table class="table table-hover table-orange table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Año</th>
+        <th>Descripción</th>
+        <th>Fecha</th>
+        <th>Factor Actualizado</th>
+        <th style="width: 230px;">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% if calificaciones %}
+        {% for c in calificaciones %}
+          <tr>
+            <td>{{ c.ano }}</td>
+            <td>{{ c.descripcion }}</td>
+            <td>{{ c.fecha|date:"d-m-Y" }}</td>
+            <td>{{ c.factor_actualizado }}</td>
+
+            <td>
+
+              <button class="btn btn-outline-orange btn-sm me-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detalleModal{{ c.id_calificacion }}">
+                Ver
+              </button>
+
+              <a href="{% url 'editar_calificacion' c.id_calificacion %}" 
+                 class="btn btn-sm btn-orange">Editar</a>
+
+              <a href="{% url 'eliminar_calificacion' c.id_calificacion %}" 
+                 class="btn btn-outline-danger btn-sm"
+                 onclick="return confirm('¿Seguro deseas eliminar?');">
+                 Eliminar
+              </a>
+
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="text-center py-3 text-muted">
+            No hay calificaciones registradas para este corredor.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-start mb-3">
+
+      <a href="{% url 'agregar_calificacion' %}" class="btn btn-orange me-2">Ingresar</a>
+
+      <button class="btn btn-outline-orange me-2">Carga x Factor</button>
+      <button class="btn btn-outline-orange">Carga x Monto</button>
+
+  </div>
+
+</div>
+
+{% for c in calificaciones %}
+<div class="modal fade" id="detalleModal{{ c.id_calificacion }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background:#FF9800; color:white;">
+        <h5 class="modal-title">Detalle de Calificación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Año:</strong> {{ c.ano }}</p>
+        <p><strong>Descripción:</strong> {{ c.descripcion }}</p>
+        <p><strong>Fecha:</strong> {{ c.fecha|date:"d-m-Y" }}</p>
+        <p><strong>Factor Actualizado:</strong> {{ c.factor_actualizado }}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-orange" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
