@@ -7,8 +7,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from .decorators import administrador_required, corredor_required
 from .models import Archivocarga, Permiso, Usuario, Corredor, Calificacion, Auditoria, Factor
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
 
-# Create your views here.
 
 # -- calificaciones
 def calificaciones_tributarias(request):
@@ -250,34 +251,29 @@ def login(request):
         correo = request.POST.get("usuario")
         contrasena = request.POST.get("password")
 
-        try:
-            usuario = Usuario.objects.get(correo=correo, contrasena=contrasena)
-        except Usuario.DoesNotExist:
+        # ✅ USAR AUTENTICACIÓN DJANGO - NO tu modelo personalizado
+        user = authenticate(request, username=correo, password=contrasena)
+        
+        if user is not None:
+            # Verificar si el usuario está activo
+            if not user.is_active:
+                return render(request, 'template_login/template_login.html', {
+                    "error": "Tu cuenta está pendiente o desactivada."
+                })
+            
+            # Iniciar sesión con Django
+            auth_login(request, user)
+            
+            # Guardar sesión personalizada (si necesitas mantener tu lógica)
+            request.session["usuario_id"] = user.id
+            request.session["usuario_nombre"] = user.username
+            request.session["usuario_rol"] = "corredor"  # O obtén del perfil
+            
+            return redirect("dashboard")
+        else:
             return render(request, 'template_login/template_login.html', {
                 "error": "Usuario o contraseña incorrectos"
             })
-
-        if usuario.estado.lower() != "activo":
-            return render(request, 'template_login/template_login.html', {
-                "error": "Tu cuenta está pendiente o desactivada."
-            })
-
-        # Guardar sesión
-        request.session["usuario_id"] = usuario.id_usuario
-        request.session["usuario_nombre"] = usuario.nombre
-        request.session["usuario_rol"] = usuario.rol.lower()
-
-        # Si es administrador
-        if usuario.rol.lower() == "administrador":
-            return redirect("perfil_administrador")
-
-        # Si es corredor
-        if usuario.rol.lower() == "corredor":
-            obtener_o_crear_corredor(usuario)
-            return redirect("dashboard")
-
-
-        return redirect("inicio")
 
     return render(request, 'template_login/template_login.html')
 
