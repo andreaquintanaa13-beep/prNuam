@@ -82,28 +82,22 @@ WSGI_APPLICATION = 'prNuam.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Configuración de base de datos para desarrollo y producción
-if os.environ.get('DATABASE_URL'):
-    # Producción - usa PostgreSQL de Railway
+if 'RENDER' in os.environ:
+    # PRODUCCIÓN (Render) - usa PostgreSQL
     DATABASES = {
         'default': dj_database_url.config(
             default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=not DEBUG
+            conn_max_age=600
         )
     }
 else:
-    # Desarrollo - usa MySQL local
+    # DESARROLLO - usa MySQL local (o cambia a SQLite para más fácil)
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'nuam',
-            'USER': 'root',
-            'PASSWORD': 'admin',
-            'HOST': 'localhost',
-            'PORT': '3306',
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
