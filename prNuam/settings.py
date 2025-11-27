@@ -174,3 +174,9 @@ SESSION_COOKIE_AGE = 1209600  # 2 semanas en segundos
 
 # Email configuration (opcional para el futuro)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Para desarrollo
+# Auto-create superuser on startup
+try:
+    from startup import create_superuser
+    create_superuser()
+except Exception as e:
+    print(f'?? Error creating superuser: {e}')
