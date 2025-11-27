@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from .decorators import administrador_required, corredor_required
 from .models import Archivocarga, Permiso, Usuario, Corredor, Calificacion, Auditoria, Factor
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -246,40 +248,21 @@ def registrarse(request):
 
 
 def login(request):
-    if request.method == "POST":
-        correo = request.POST.get("usuario")
-        contrasena = request.POST.get("password")
-
-        try:
-            usuario = Usuario.objects.get(correo=correo, contrasena=contrasena)
-        except Usuario.DoesNotExist:
-            return render(request, 'template_login/template_login.html', {
-                "error": "Usuario o contraseña incorrectos"
-            })
-
-        if usuario.estado.lower() != "activo":
-            return render(request, 'template_login/template_login.html', {
-                "error": "Tu cuenta está pendiente o desactivada."
-            })
-
-        # Guardar sesión
-        request.session["usuario_id"] = usuario.id_usuario
-        request.session["usuario_nombre"] = usuario.nombre
-        request.session["usuario_rol"] = usuario.rol.lower()
-
-        # Si es administrador
-        if usuario.rol.lower() == "administrador":
-            return redirect("perfil_administrador")
-
-        # Si es corredor
-        if usuario.rol.lower() == "corredor":
-            obtener_o_crear_corredor(usuario)
-            return redirect("dashboard")
-
-
-        return redirect("inicio")
-
-    return render(request, 'template_login/template_login.html')
+    if request.method == 'POST':
+        correo = request.POST.get('correo')
+        contrasena = request.POST.get('contrasena')
+        
+        # Usar sistema de autenticación de Django
+        user = authenticate(request, username=correo, password=contrasena)
+        
+        if user is not None:
+            auth_login(request, user)
+            return redirect('dashboard')  # Redirigir al dashboard
+        else:
+            # Mostrar error de autenticación
+            return render(request, 'login.html', {'error': 'Credenciales inválidas'})
+    
+    return render(request, 'login.html')
 
 # --- usuario
 def perfil_usuario(request):
